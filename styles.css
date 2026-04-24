@@ -63,6 +63,8 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    min-width: 320px;
+    min-height: 480px;
 }
 
 body {
@@ -72,35 +74,38 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 10px;
     transition: all 0.3s ease;
 }
 
 #app {
     width: 100%;
-    max-width: 600px;
+    max-width: 100%;
     height: 100%;
-    max-height: 800px;
+    max-height: 100%;
     display: flex;
     flex-direction: column;
+    padding: 10px;
 }
 
 .game-header {
     text-align: center;
-    padding: 20px 0;
+    padding: 10px 0;
+    flex-shrink: 0;
 }
 
 .game-header h1 {
-    font-size: 2.5rem;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
     font-weight: 700;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .game-stats {
     display: flex;
     justify-content: center;
-    gap: 30px;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 .stat-item {
@@ -110,13 +115,13 @@ body {
 }
 
 .stat-label {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
-    margin-bottom: 5px;
+    margin-bottom: 3px;
 }
 
 .stat-value {
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 3vw, 1.5rem);
     font-weight: 700;
     color: var(--accent);
 }
@@ -127,16 +132,19 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    min-height: 0;
+    width: 100%;
 }
 
 .controls {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
 .control-group {
@@ -221,16 +229,25 @@ body {
 .game-board-container {
     position: relative;
     width: 100%;
-    padding: 20px;
+    max-width: 100%;
+    padding: 10px;
     background: var(--board-bg);
     border-radius: 16px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    flex-shrink: 1;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .game-board {
     display: grid;
-    gap: 8px;
+    gap: 4px;
     width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
     aspect-ratio: 1;
 }
 
@@ -242,12 +259,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2rem;
+    font-size: clamp(0.8rem, 4vw, 2rem);
     font-weight: 700;
     cursor: pointer;
     user-select: none;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 4px 10px var(--tile-shadow);
+    min-width: 0;
+    min-height: 0;
 }
 
 .tile:hover:not(.tile-empty) {

@@ -615,6 +615,7 @@
             this.fireworks = new FireworksSystem('fireworks-canvas');
             
             this.gameBoard = document.getElementById('game-board');
+            this.gameBoardContainer = document.querySelector('.game-board-container');
             this.movesDisplay = document.getElementById('moves');
             this.timerDisplay = document.getElementById('timer');
             this.difficultySelect = document.getElementById('difficulty');
@@ -630,6 +631,7 @@
             this.dragStartRow = -1;
             this.dragStartCol = -1;
             this.isDragging = false;
+            this.resizeTimeout = null;
 
             this.init();
         }
@@ -661,8 +663,27 @@
                 self.handleChangeTheme(theme);
             });
 
+            window.addEventListener('resize', function() { self.handleWindowResize(); });
+
             this.game.setStateChangeListener(function(state) { self.updateUI(state); });
             this.game.setWinListener(function() { self.handleWin(); });
+        };
+
+        App.prototype.handleWindowResize = function() {
+            if (this.resizeTimeout) {
+                clearTimeout(this.resizeTimeout);
+            }
+            
+            const self = this;
+            this.resizeTimeout = window.setTimeout(function() {
+                self.updateBoardDimensions();
+                self.resizeTimeout = null;
+            }, 100);
+        };
+
+        App.prototype.updateBoardDimensions = function() {
+            const state = this.game.getState();
+            this.renderBoard(state);
         };
 
         App.prototype.updateUI = function(state) {
