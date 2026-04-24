@@ -8,24 +8,24 @@
 </head>
 <body>
     <div id="app">
-        <header class="game-header">
+        <header class="header">
             <h1>滑动拼图游戏</h1>
-            <div class="game-stats">
-                <div class="stat-item">
+            <div class="stats">
+                <div class="stat">
                     <span class="stat-label">步数</span>
                     <span class="stat-value" id="moves">0</span>
                 </div>
-                <div class="stat-item">
+                <div class="stat">
                     <span class="stat-label">时间</span>
                     <span class="stat-value" id="timer">00:00</span>
                 </div>
             </div>
         </header>
 
-        <main class="game-main">
+        <main class="main-content">
             <div class="controls">
                 <div class="control-group">
-                    <label for="difficulty">难度：</label>
+                    <label>难度：</label>
                     <select id="difficulty">
                         <option value="3">3×3</option>
                         <option value="4">4×4</option>
@@ -34,7 +34,7 @@
                     </select>
                 </div>
                 <div class="control-group">
-                    <label for="theme">主题：</label>
+                    <label>主题：</label>
                     <select id="theme">
                         <option value="classic">经典</option>
                         <option value="ocean">海洋</option>
@@ -49,24 +49,26 @@
                 </div>
             </div>
 
-            <div class="game-board-container">
-                <div id="game-board" class="game-board"></div>
+            <div class="board-container">
+                <div id="game-board" class="board"></div>
             </div>
 
-            <div id="victory-message" class="victory-message hidden">
-                <h2>恭喜你！</h2>
-                <p>你完成了拼图！</p>
-                <div class="victory-stats">
-                    <span>步数: <span id="final-moves">0</span></span>
-                    <span>时间: <span id="final-time">00:00</span></span>
+            <div id="victory-modal" class="modal hidden">
+                <div class="modal-content">
+                    <h2>🎉 恭喜你！</h2>
+                    <p>你完成了拼图！</p>
+                    <div class="victory-stats">
+                        <span>步数: <strong id="final-moves">0</strong></span>
+                        <span>时间: <strong id="final-time">00:00</strong></span>
+                    </div>
+                    <button id="play-again-btn" class="btn btn-primary">再玩一次</button>
                 </div>
-                <button id="play-again-btn" class="btn btn-primary">再玩一次</button>
             </div>
         </main>
 
-        <canvas id="fireworks-canvas" class="fireworks-canvas"></canvas>
+        <canvas id="fireworks" class="fireworks-canvas"></canvas>
     </div>
 
-    <script src="bundle.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
