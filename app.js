@@ -18,7 +18,6 @@
         function createSolvedGrid(size) {
             const grid = [];
             let value = 1;
-
             for (let row = 0; row < size; row++) {
                 grid[row] = [];
                 for (let col = 0; col < size; col++) {
@@ -29,7 +28,6 @@
                     }
                 }
             }
-
             return grid;
         }
 
@@ -65,26 +63,6 @@
             };
         };
 
-        Game.prototype.getSize = function() {
-            return this.state.size;
-        };
-
-        Game.prototype.getMoves = function() {
-            return this.state.moves;
-        };
-
-        Game.prototype.getTime = function() {
-            return this.state.time;
-        };
-
-        Game.prototype.isPlaying = function() {
-            return this.state.isPlaying;
-        };
-
-        Game.prototype.isWon = function() {
-            return this.state.isWon;
-        };
-
         Game.prototype.getEmptyPosition = function() {
             for (let row = 0; row < this.state.size; row++) {
                 for (let col = 0; col < this.state.size; col++) {
@@ -100,7 +78,6 @@
             const value = this.state.grid[row][col];
             const correctValue = row * this.state.size + col + 1;
             const isCorrect = value === correctValue;
-
             return {
                 value: value,
                 row: row,
@@ -114,7 +91,6 @@
             const emptyPos = this.getEmptyPosition();
             const rowDiff = Math.abs(row - emptyPos.row);
             const colDiff = Math.abs(col - emptyPos.col);
-
             return (rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1);
         };
 
@@ -156,12 +132,10 @@
         Game.prototype.getAdjacentPositions = function(pos) {
             const positions = [];
             const size = this.state.size;
-
             if (pos.row > 0) positions.push({ row: pos.row - 1, col: pos.col });
             if (pos.row < size - 1) positions.push({ row: pos.row + 1, col: pos.col });
             if (pos.col > 0) positions.push({ row: pos.row, col: pos.col - 1 });
             if (pos.col < size - 1) positions.push({ row: pos.row, col: pos.col + 1 });
-
             return positions;
         };
 
@@ -250,10 +224,6 @@
             this.saveToLocalStorage();
         };
 
-        Game.prototype.getTheme = function() {
-            return this.state.theme;
-        };
-
         Game.prototype.startTimer = function() {
             if (this.timerInterval) return;
 
@@ -286,7 +256,6 @@
                     }
                 }
             }
-
             return true;
         };
 
@@ -386,18 +355,6 @@
                 console.error('Failed to get scores:', e);
                 return [];
             }
-        };
-
-        Game.prototype.getBestScore = function(size) {
-            const scores = this.getScores().filter(function(s) { return s.size === size; });
-            if (scores.length === 0) return null;
-
-            scores.sort(function(a, b) {
-                if (a.moves !== b.moves) return a.moves - b.moves;
-                return a.time - b.time;
-            });
-
-            return scores[0];
         };
 
         return Game;
@@ -612,10 +569,9 @@
     const PuzzleApp = (function() {
         function App() {
             this.game = new PuzzleGame();
-            this.fireworks = new FireworksSystem('fireworks-canvas');
+            this.fireworks = new FireworksSystem('fireworks');
             
             this.gameBoard = document.getElementById('game-board');
-            this.gameBoardContainer = document.querySelector('.game-board-container');
             this.movesDisplay = document.getElementById('moves');
             this.timerDisplay = document.getElementById('timer');
             this.difficultySelect = document.getElementById('difficulty');
@@ -623,7 +579,7 @@
             this.shuffleButton = document.getElementById('shuffle-btn');
             this.undoButton = document.getElementById('undo-btn');
             this.resetButton = document.getElementById('reset-btn');
-            this.victoryMessage = document.getElementById('victory-message');
+            this.victoryModal = document.getElementById('victory-modal');
             this.finalMoves = document.getElementById('final-moves');
             this.finalTime = document.getElementById('final-time');
             this.playAgainButton = document.getElementById('play-again-btn');
@@ -722,12 +678,12 @@
 
         App.prototype.createTileElement = function(tile) {
             const tileElement = document.createElement('div');
-            tileElement.className = 'tile';
+            tileElement.className = 'cell';
             tileElement.dataset.row = tile.row.toString();
             tileElement.dataset.col = tile.col.toString();
 
             if (tile.isEmpty) {
-                tileElement.classList.add('tile-empty');
+                tileElement.classList.add('cell-empty');
                 return tileElement;
             }
 
@@ -736,7 +692,7 @@
             }
 
             const numberSpan = document.createElement('span');
-            numberSpan.className = 'tile-number';
+            numberSpan.className = 'cell-number';
             numberSpan.textContent = tile.value.toString();
             tileElement.appendChild(numberSpan);
 
@@ -771,7 +727,7 @@
             const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
             const target = document.elementFromPoint(clientX, clientY);
 
-            if (target && target.classList.contains('tile-empty')) {
+            if (target && target.classList.contains('cell-empty')) {
                 const emptyRow = parseInt(target.dataset.row);
                 const emptyCol = parseInt(target.dataset.col);
 
@@ -800,7 +756,7 @@
 
         App.prototype.handleShuffle = function() {
             this.game.shuffle();
-            this.hideVictoryMessage();
+            this.hideVictoryModal();
         };
 
         App.prototype.handleUndo = function() {
@@ -809,17 +765,17 @@
 
         App.prototype.handleReset = function() {
             this.game.reset();
-            this.hideVictoryMessage();
+            this.hideVictoryModal();
         };
 
         App.prototype.handlePlayAgain = function() {
             this.game.shuffle();
-            this.hideVictoryMessage();
+            this.hideVictoryModal();
         };
 
         App.prototype.handleChangeDifficulty = function(size) {
             this.game.changeSize(size);
-            this.hideVictoryMessage();
+            this.hideVictoryModal();
         };
 
         App.prototype.handleChangeTheme = function(theme) {
@@ -832,16 +788,16 @@
             this.finalMoves.textContent = state.moves.toString();
             this.finalTime.textContent = this.formatTime(state.time);
             
-            this.showVictoryMessage();
+            this.showVictoryModal();
             this.fireworks.start();
         };
 
-        App.prototype.showVictoryMessage = function() {
-            this.victoryMessage.classList.remove('hidden');
+        App.prototype.showVictoryModal = function() {
+            this.victoryModal.classList.remove('hidden');
         };
 
-        App.prototype.hideVictoryMessage = function() {
-            this.victoryMessage.classList.add('hidden');
+        App.prototype.hideVictoryModal = function() {
+            this.victoryModal.classList.add('hidden');
         };
 
         return App;

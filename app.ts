@@ -7,6 +7,7 @@ class PuzzleApp {
     private fireworks: FireworksSystem;
     
     private gameBoard: HTMLDivElement;
+    private gameBoardContainer: HTMLDivElement;
     private movesDisplay: HTMLSpanElement;
     private timerDisplay: HTMLSpanElement;
     private difficultySelect: HTMLSelectElement;
@@ -22,12 +23,15 @@ class PuzzleApp {
     private dragStartRow: number = -1;
     private dragStartCol: number = -1;
     private isDragging: boolean = false;
+    
+    private resizeTimeout: number | null = null;
 
     constructor() {
         this.game = new PuzzleGame();
         this.fireworks = new FireworksSystem('fireworks-canvas');
         
         this.gameBoard = document.getElementById('game-board') as HTMLDivElement;
+        this.gameBoardContainer = document.querySelector('.game-board-container') as HTMLDivElement;
         this.movesDisplay = document.getElementById('moves') as HTMLSpanElement;
         this.timerDisplay = document.getElementById('timer') as HTMLSpanElement;
         this.difficultySelect = document.getElementById('difficulty') as HTMLSelectElement;
@@ -70,8 +74,26 @@ class PuzzleApp {
             this.handleChangeTheme(theme);
         });
 
+        window.addEventListener('resize', () => this.handleWindowResize());
+
         this.game.setStateChangeListener((state) => this.updateUI(state));
         this.game.setWinListener(() => this.handleWin());
+    }
+
+    private handleWindowResize(): void {
+        if (this.resizeTimeout) {
+            clearTimeout(this.resizeTimeout);
+        }
+        
+        this.resizeTimeout = window.setTimeout(() => {
+            this.updateBoardDimensions();
+            this.resizeTimeout = null;
+        }, 100);
+    }
+
+    private updateBoardDimensions(): void {
+        const state = this.game.getState();
+        this.renderBoard(state);
     }
 
     private updateUI(state: GameState): void {
