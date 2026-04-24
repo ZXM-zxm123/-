@@ -1,0 +1,23 @@
+{
+  "name": "sliding-puzzle",
+  "version": "1.0.0",
+  "description": "经典滑动拼图游戏，支持3×3至6×6难度选择",
+  "main": "index.html",
+  "scripts": {
+    "build": "tsc --noEmit && npx esbuild app.ts --bundle --outfile=bundle.js --target=es2020",
+    "watch": "npx esbuild app.ts --bundle --outfile=bundle.js --target=es2020 --watch",
+    "dev": "npx live-server"
+  },
+  "keywords": [
+    "puzzle",
+    "game",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "esbuild": "^0.20.0",
+    "live-server": "^1.2.2"
+  }
+}
